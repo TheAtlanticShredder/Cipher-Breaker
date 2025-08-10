@@ -1,237 +1,358 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Cipher Breaker 2099 — Phase 1</title>
-  <meta name="theme-color" content="#0b0f1a">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" sizes="192x192" href="icons/icon-192.png">
-  <style>
-    :root{
-      --bg:#0a0f18; --fg:#e6f0ff;
-      --n1:#00f5d4; --n2:#7b61ff; --n3:#ff477e; --n4:#ffd166;
-      --muted:#8ea0b8;
-    }
-    html,body{height:100%}
-    body{
-      margin:0; background:
-        radial-gradient(1400px 900px at 70% -10%, #121a30 0%, transparent 60%),
-        radial-gradient(900px 600px at -10% 110%, #1a1030 0%, transparent 60%),
-        var(--bg);
-      color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-      display:flex; align-items:center; justify-content:center; overflow:hidden;
-    }
-    .wrap{ width:min(1100px,96vw); }
-    .card{
-      border-radius:18px; background:rgba(255,255,255,.03);
-      box-shadow:0 12px 38px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.06);
-      backdrop-filter: blur(8px);
-    }
-    header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px;}
-    h1{margin:0; font-size:20px; letter-spacing:.6px;}
-    .pill{padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.07); font-variant-numeric:tabular-nums;}
-    .muted{color:var(--muted); font-size:13px}
-    .btn{cursor:pointer; border:none; padding:10px 14px; border-radius:12px; font-weight:800; color:#0a0a0a; background:linear-gradient(90deg, var(--n1), var(--n2));}
-    .btn:active{ transform:translateY(1px); }
-    .canvas-wrap{ position:relative; width:100%; aspect-ratio: 16/9; }
-    canvas{ width:100%; height:100%; display:block; border-radius:18px;
-      background:linear-gradient(to bottom, rgba(0,0,0,.2), rgba(0,0,0,.5)), #080a10;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.06);
-    }
-    .scan{ position:absolute; inset:0; border-radius:18px; pointer-events:none;
-      background: repeating-linear-gradient(to bottom, rgba(255,255,255,.05), rgba(255,255,255,.05) 1px, transparent 2px);
-      mix-blend-mode:overlay; opacity:.22;
-    }
-    .overlay{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-    .panel{ text-align:center; max-width:80%; pointer-events:auto; }
-    .title{ font-size:28px; font-weight:900; margin-bottom:6px; }
-    .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight:800; padding:2px 6px; border-radius:6px; background:rgba(255,255,255,.08); }
-    .hidden{ display:none; }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retro Runner — Jungle Heist</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" sizes="192x192" href="icons/icon-192.png">
+<meta name="theme-color" content="#0b0f15">
+<style>
+  html,body{height:100%} body{margin:0;background:#0b0f15;color:#e6f0ff;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;display:flex;align-items:center;justify-content:center}
+  .wrap{width:min(980px,96vw)}
+  .card{border-radius:16px;background:rgba(255,255,255,.04);box-shadow:0 10px 30px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.06);backdrop-filter:blur(8px)}
+  header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
+  .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-variant-numeric:tabular-nums}
+  .btn{cursor:pointer;border:none;padding:8px 12px;border-radius:10px;font-weight:800;color:#081015;background:linear-gradient(90deg,#00f5d4,#7b61ff)}
+  .canvas-wrap{position:relative;aspect-ratio:16/9;width:100%}
+  canvas{width:100%;height:100%;display:block;border-radius:16px;background:linear-gradient(#0f1624,#071019)}
+  .scan{position:absolute;inset:0;border-radius:16px;pointer-events:none;background:repeating-linear-gradient(to bottom, rgba(255,255,255,.05), rgba(255,255,255,.05) 1px, transparent 2px);mix-blend-mode:overlay;opacity:.2}
+  .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .panel{pointer-events:auto;text-align:center;max-width:86%}
+  .title{font-size:26px;font-weight:900;margin-bottom:6px}
+  .muted{color:#8ea0b8}
+  footer{text-align:center;color:#8ea0b8;font-size:12px;padding:8px 0}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <header>
-        <div>
-          <h1>CIPHER BREAKER 2099 — Phase 1</h1>
-          <div class="muted">Click wheels to rotate the glyphs. Match the target code exactly.</div>
+<div class="wrap">
+  <div class="card">
+    <header>
+      <div><b>RETRO RUNNER — Jungle Heist</b><div class="muted" style="font-size:12px">Original homage (no third‑party IP).</div></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="pill">Score: <span id="score">0</span></div>
+        <div class="pill">Lives: <span id="lives">3</span></div>
+        <button id="btnRestart" class="btn">Restart</button>
+      </div>
+    </header>
+    <div class="canvas-wrap">
+      <canvas id="game" width="960" height="540"></canvas>
+      <div class="scan"></div>
+      <div id="start" class="overlay">
+        <div class="panel">
+          <div class="title">Run. Jump. Swing. Survive.</div>
+          <div class="muted">WASD/Arrow keys to move & jump. Space to grab/swing on vines. Avoid logs & scorpions. Collect treasure.</div>
+          <button id="btnStart" class="btn" style="margin-top:10px">Start</button>
         </div>
-        <div class="pill">Target: <span id="targetTxt">— — —</span></div>
-        <button id="btnReset" class="btn">New Code</button>
-      </header>
-      <div class="canvas-wrap">
-        <canvas id="game" width="1200" height="675"></canvas>
-        <div class="scan"></div>
-        <div id="win" class="overlay hidden">
-          <div class="panel">
-            <div class="title" id="winTitle">CODE CRACKED</div>
-            <div class="muted" style="margin-top:6px">Click <span class="kbd">New Code</span> or press <span class="kbd">N</span> to play again.</div>
-          </div>
+      </div>
+      <div id="gameover" class="overlay" style="display:none">
+        <div class="panel">
+          <div class="title">Game Over</div>
+          <div class="muted">Press Restart to try again.</div>
         </div>
       </div>
     </div>
+    <footer>© Retro Runner — an original game, inspired by classic platformers.</footer>
   </div>
-
+</div>
 <script>
 (function(){
   const cv = document.getElementById('game');
   const ctx = cv.getContext('2d');
-  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-  cv.width = 1200 * dpr; cv.height = 675 * dpr; ctx.scale(dpr, dpr);
+  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio||1));
+  cv.width = 960*dpr; cv.height = 540*dpr; ctx.scale(dpr,dpr);
 
-  const winOverlay = document.getElementById('win');
-  const targetTxt = document.getElementById('targetTxt');
-  const btnReset = document.getElementById('btnReset');
+  const elScore = document.getElementById('score');
+  const elLives = document.getElementById('lives');
+  const startOverlay = document.getElementById('start');
+  const gameOverOverlay = document.getElementById('gameover');
+  document.getElementById('btnStart').addEventListener('click', start);
+  document.getElementById('btnRestart').addEventListener('click', ()=>{reset(); start();});
+
+  const W=960,H=540, G=1200; // world width per chunk
+  const GRAV=1800, JUMP=520, SPEED=220, FRICTION=0.86;
 
   const state = {
-    w: 1200, h: 675,
-    wheels: 3,
-    glyphCount: 10,
-    target: [0,0,0],
-    values: [0,0,0],
-    sel: 0,
-    cracked: false
+    running:false, t:0, dt:0, last:0,
+    camX:0, score:0, lives:3,
+    hero:{x:60,y:360,w:22,h:30,vx:0,vy:0,onGround:false,grab:false,grabId:-1},
+    chunks:[], // generated segments with platforms, pits, vines, items, hazards
   };
 
   function rng(a,b){ return Math.random()*(b-a)+a; }
-  function choice(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+  function choice(a){ return a[Math.floor(Math.random()*a.length)]; }
 
-  function drawGlyph(g, x, y, s){
-    const neon = ['#00f5d4','#7b61ff','#ffd166','#ff477e'][g%4];
-    const r = s*0.4;
-    const lw = Math.max(2, s*0.08);
-    // glow layer
-    ctx.save();
-    ctx.translate(x,y);
-    ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=lw;
-    ctx.strokeStyle=neon; ctx.fillStyle=neon; ctx.shadowBlur=s*0.25; ctx.shadowColor=neon;
-    switch(g%10){
-      case 0: poly([[0,-r],[r*0.86,r*0.5],[-r*0.86,r*0.5]], true); break;
-      case 1: circle(0,0,r,false); circle(0,0,r*0.15,true); break;
-      case 2: poly([[0,-r],[r,0],[0,r],[-r,0]], true); break;
-      case 3: line(-r,0,r,0); line(0,-r,0,r); break;
-      case 4: poly([[-r*0.8,-r*0.2],[0, r*0.5],[r*0.8,-r*0.2]], false); break;
-      case 5: rect(-r*0.7,-r*0.7,r*1.4,r*1.4,false); break;
-      case 6: {const a=Math.PI/3; ctx.beginPath(); for(let i=0;i<6;i++){const th=a*i; const px=Math.cos(th)*r,py=Math.sin(th)*r; i?ctx.lineTo(px,py):ctx.moveTo(px,py);} ctx.closePath(); ctx.stroke();} break;
-      case 7: star(0,0,r*0.95,5); break;
-      case 8: line(-r,0,r,0); circle(r*0.6,-r*0.4,r*0.12,true); break;
-      case 9: arc(0,0,r, -Math.PI*0.2, Math.PI*0.2); arc(0,0,r, Math.PI*0.8, Math.PI*1.2); break;
+  function makeChunk(i){
+    const x0 = i*G;
+    // base ground y
+    const gy = 430;
+    const pits = []; // {x,w}
+    const vines = []; // {x,y,len}
+    const logs = []; // rolling hazards
+    const scorp = []; // crawling
+    const gems = []; // {x,y}
+    // randomized pit/vine patterns
+    for(let p=0;p<3;p++){
+      const w = rng(80,180);
+      const x = x0 + rng(180, G-220);
+      pits.push({x,w});
+      // maybe vine over pit
+      if(Math.random()<0.6){
+        vines.push({x:x+w/2, y:gy-180, len:160});
+      }
     }
-    ctx.restore();
-    function line(x1,y1,x2,y2){ ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); }
-    function circle(cx,cy,rr,fill){ ctx.beginPath(); ctx.arc(cx,cy,rr,0,Math.PI*2); fill?ctx.fill():ctx.stroke(); }
-    function rect(x,y,w,h,fill){ ctx.beginPath(); ctx.rect(x,y,w,h); fill?ctx.fill():ctx.stroke(); }
-    function poly(points, close){ ctx.beginPath(); points.forEach((p,i)=> i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); if(close) ctx.closePath(); ctx.stroke(); }
-    function star(cx,cy,R,n){ const r=R*0.45; ctx.beginPath(); for(let i=0;i<n*2;i++){ const ang=Math.PI*i/n - Math.PI/2; const rr = i%2? r:R; const px=cx+Math.cos(ang)*rr, py=cy+Math.sin(ang)*rr; i?ctx.lineTo(px,py):ctx.moveTo(px,py);} ctx.closePath(); ctx.stroke(); }
-    function arc(cx,cy,rr,a1,a2){ ctx.beginPath(); ctx.arc(cx,cy,rr,a1,a2); ctx.stroke(); }
+    // logs
+    for(let k=0;k<2;k++){
+      logs.push({x:x0+rng(200,G-100), y:gy-12, r:12, vx: choice([120,-120])});
+    }
+    // scorpions
+    for(let s=0;s<3;s++){
+      scorp.push({x:x0+rng(100,G-100), y:gy-10, w:26, h:10, vx: choice([60,-60])});
+    }
+    // gems
+    for(let g=0;g<5;g++){
+      gems.push({x:x0+rng(80,G-80), y:gy- rng(80,200)});
+    }
+
+    return {i, x0, gy, pits, vines, logs, scorp, gems};
   }
 
-  function randomCode(){
-    const arr=[]; for(let i=0;i<state.wheels;i++) arr.push(Math.floor(Math.random()*state.glyphCount)); return arr;
+  function reset(){
+    state.camX=0; state.score=0; state.lives=3;
+    elScore.textContent=0; elLives.textContent=3;
+    state.hero={x:60,y:360,w:22,h:30,vx:0,vy:0,onGround:false,grab:false,grabId:-1};
+    state.chunks = [makeChunk(0), makeChunk(1), makeChunk(2)];
+    startOverlay.style.display='';
+    gameOverOverlay.style.display='none';
+    state.running=false;
   }
 
-  function setNewPuzzle(){
-    state.target = randomCode();
-    state.values = randomCode();
-    state.cracked = false;
-    winOverlay.classList.add('hidden');
-    targetTxt.textContent = state.target.join('  ');
+  function start(){
+    state.running=true;
+    state.last=performance.now();
+    startOverlay.style.display='none';
   }
 
-  cv.addEventListener('click', (e)=>{
-    const rect = cv.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (state.w/rect.width);
-    const y = (e.clientY - rect.top) * (state.h/rect.height);
-    const hit = pickWheel(x,y);
-    if(hit>=0 && !state.cracked){ spin(hit, +1); }
+  const keys=new Set();
+  window.addEventListener('keydown', e=>{
+    keys.add(e.key.toLowerCase());
+    if((e.key===' '||e.code==='Space') && !state.hero.grab && nearVine()) {
+      state.hero.grab = true; state.hero.grabId = nearVine();
+      state.hero.vx = 0; state.hero.vy = 0;
+    } else if(e.key.toLowerCase()==='x'){ // release
+      releaseVine();
+    }
   });
+  window.addEventListener('keyup', e=> keys.delete(e.key.toLowerCase()));
 
-  window.addEventListener('keydown', (e)=>{
-    if(e.key==='ArrowLeft'){ state.sel = (state.sel+state.wheels-1)%state.wheels; }
-    if(e.key==='ArrowRight'){ state.sel = (state.sel+1)%state.wheels; }
-    if(e.key==='ArrowUp' || e.key===' '){ spin(state.sel,+1); }
-    if(e.key==='ArrowDown'){ spin(state.sel,-1); }
-    if(e.key==='n' || e.key==='N'){ setNewPuzzle(); }
-  });
-
-  document.getElementById('btnReset').addEventListener('click', setNewPuzzle);
-
-  function spin(idx, dir){
-    if(state.cracked) return;
-    state.values[idx] = (state.values[idx] + dir + state.glyphCount) % state.glyphCount;
-    if(state.values.every((v,i)=> v===state.target[i])){
-      state.cracked = true;
-      document.getElementById('win').classList.remove('hidden');
+  function nearVine(){
+    for(const ch of state.chunks){
+      for(let vi=0;vi<ch.vines.length;vi++){
+        const v=ch.vines[vi]; const dx = (v.x - state.hero.x);
+        if(Math.abs(dx)<18 && Math.abs((v.y - state.hero.y))<140) return vi + ch.i*100; // unique id
+      }
+    }
+    return  -1;
+  }
+  function getVineById(id){
+    const ci = Math.floor(id/100); const vi = id%100;
+    return state.chunks.find(c=>c.i===ci)?.vines[vi];
+  }
+  function releaseVine(){
+    if(state.hero.grab){
+      // fling forward a bit
+      state.hero.vx = 260;
+      state.hero.vy = -80;
+      state.hero.grab=false; state.hero.grabId=-1;
     }
   }
 
-  function pickWheel(x,y){
-    const cy = state.h*0.58;
-    const spacing = state.w*0.22;
-    const start = state.w*0.5 - spacing;
-    const R = 110;
-    for(let i=0;i<state.wheels;i++){
-      const cx = start + i*spacing;
-      const dx = x - cx, dy = y - cy;
-      if(dx*dx + dy*dy <= (R*R)) return i;
+  function update(){
+    const now = performance.now();
+    state.dt = Math.min(0.033, (now - state.last)/1000); state.last = now;
+    state.t += state.dt;
+    if(!state.running) return;
+
+    const h=state.hero; const chs = state.chunks;
+
+    // controls
+    let left = keys.has('arrowleft')||keys.has('a');
+    let right= keys.has('arrowright')||keys.has('d');
+    let up   = keys.has('arrowup')||keys.has('w');
+    if(h.grab){
+      // swing vertically
+      const vine = getVineById(h.grabId);
+      if(vine){
+        // oscillate position around vine top with simple pendulum approx
+        const len = vine.len;
+        // move with left/right to swing
+        if(left) h.vx -= 6;
+        if(right) h.vx += 6;
+        h.vx *= 0.98;
+        h.x = vine.x + Math.sin(state.t*2 + h.vx*0.02)*40;
+        h.y = vine.y + Math.cos(state.t*2 + h.vx*0.02)*len*0.8;
+        if(up){ releaseVine(); }
+      } else {
+        h.grab=false;
+      }
+    } else {
+      if(left) h.vx -= 14;
+      if(right) h.vx += 14;
+      if((keys.has(' ')||up) && h.onGround){ h.vy = -JUMP; h.onGround=false; }
+      h.vx *= FRICTION;
+      h.vy += GRAV*state.dt;
+      h.x += h.vx*state.dt;
+      h.y += h.vy*state.dt;
     }
-    return -1;
+
+    // collide with ground and pits
+    h.onGround=false;
+    const gy = currentGroundY(h.x);
+    if(h.y + h.h/2 >= gy){
+      h.y = gy - h.h/2; h.vy = 0; h.onGround = true;
+    }
+
+    // cam follow
+    state.camX = Math.max(0, h.x - 200);
+
+    // hazards: logs roll and bounce at bounds
+    for(const c of chs){
+      for(const log of c.logs){
+        log.x += log.vx*state.dt;
+        if(log.x < c.x0+40 || log.x > c.x0+G-40) log.vx *= -1;
+        if(hitCircleRect(log.x, log.y, log.r, h.x, h.y, h.w, h.h)) loseLife();
+      }
+      for(const s of c.scorp){
+        s.x += s.vx*state.dt;
+        if(s.x < c.x0+30 || s.x > c.x0+G-30) s.vx *= -1;
+        if(hitRectRect(s.x- s.w/2, s.y- s.h/2, s.w, s.h, h.x-h.w/2, h.y-h.h/2, h.w, h.h)) loseLife();
+      }
+      // gems
+      for(let i=c.gems.length-1;i>=0;i--){
+        const g=c.gems[i];
+        if(hitCircleRect(g.x,g.y,10,h.x,h.y,h.w,h.h)){ c.gems.splice(i,1); state.score+=10; elScore.textContent=state.score; }
+      }
+    }
+
+    // chunk generation ahead
+    const leadChunkIndex = Math.floor((h.x+G)/G);
+    if(!chs.find(c=>c.i===leadChunkIndex)){
+      chs.push(makeChunk(leadChunkIndex));
+      // also remove far left
+      const minIndex = leadChunkIndex-2;
+      for(let i=chs.length-1;i>=0;i--) if(chs[i].i<minIndex) chs.splice(i,1);
+    }
+  }
+
+  function loseLife(){
+    state.lives--; elLives.textContent = state.lives;
+    // reset hero slightly back
+    state.hero.x -= 80; state.hero.y -= 60; state.hero.vx = 0; state.hero.vy = 0; state.hero.grab=false;
+    if(state.lives<=0){ state.running=false; gameOverOverlay.style.display=''; }
+  }
+
+  function currentGroundY(x){
+    // find chunk and see if inside pit
+    const ci = Math.floor(x/G);
+    const chunk = state.chunks.find(c=>c.i===ci);
+    const gy = chunk? chunk.gy : 430;
+    if(!chunk) return gy;
+    for(const p of chunk.pits){
+      if(x>p.x && x<p.x+p.w) return H+200; // pit => fall
+    }
+    return gy;
+  }
+
+  function hitCircleRect(cx,cy,cr, rx,ry,rw,rh){
+    const testX = Math.max(rx-rw/2, Math.min(cx, rx+rw/2));
+    const testY = Math.max(ry-rh/2, Math.min(cy, ry+rh/2));
+    const dx=cx-testX, dy=cy-testY;
+    return dx*dx+dy*dy <= cr*cr;
+  }
+  function hitRectRect(x1,y1,w1,h1,x2,y2,w2,h2){
+    return !(x2>x1+w1 || x2+w2 < x1 || y2>y1+h1 || y2+h2<y1);
   }
 
   function draw(){
-    const w=state.w,h=state.h;
+    const w=960,h=540;
     ctx.clearRect(0,0,w,h);
-    // grid
-    ctx.save(); ctx.globalAlpha=0.09; ctx.strokeStyle='#7b61ff'; ctx.lineWidth=1;
-    const gap=40; for(let x=0;x<=w;x+=gap){ ctx.beginPath(); ctx.moveTo(x+0.5,0); ctx.lineTo(x+0.5,h); ctx.stroke(); }
-    for(let y=0;y<=h;y+=gap){ ctx.beginPath(); ctx.moveTo(0,y+0.5); ctx.lineTo(w,y+0.5); ctx.stroke(); }
-    ctx.restore();
-    // target banner
-    ctx.save();
-    ctx.globalAlpha=.9; ctx.fillStyle='rgba(255,255,255,.06)'; ctx.fillRect(w*0.1, h*0.15-30, w*0.8, 60);
-    ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.strokeRect(w*0.1+0.5, h*0.15-29.5, w*0.8-1, 59);
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.font='700 18px ui-sans-serif'; ctx.fillStyle='#8ea0b8';
-    ctx.fillText('TARGET CODE', w*0.5, h*0.15-12);
-    const gx0=w*0.5-160, gy0=h*0.15+8, gs=44, step=80;
-    for(let i=0;i<state.wheels;i++){ drawGlyph(state.target[i], gx0+i*step, gy0, gs); }
-    ctx.restore();
-    // wheels
-    const cy=h*0.58, spacing=w*0.22, start=w*0.5-spacing;
-    for(let i=0;i<state.wheels;i++){
-      const cx=start+i*spacing, R=110, rInner=88;
-      ctx.save();
-      const glow=['#00f5d4','#7b61ff','#ff477e'][i%3];
-      ctx.shadowBlur=18; ctx.shadowColor=glow; ctx.strokeStyle='rgba(255,255,255,.14)';
-      ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
-      ctx.globalAlpha=.2; ctx.beginPath(); ctx.arc(cx,cy,rInner,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1;
-      for(let t=0;t<state.glyphCount;t++){
-        const th=(t/state.glyphCount)*Math.PI*2 - Math.PI/2;
-        const x1=cx+Math.cos(th)*rInner, y1=cy+Math.sin(th)*rInner;
-        const x2=cx+Math.cos(th)*(rInner-10), y2=cy+Math.sin(th)*(rInner-10);
-        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-      }
-      drawGlyph(state.values[i], cx, cy, 90);
-      if(state.sel===i){
-        ctx.strokeStyle=glow; ctx.lineWidth=3; ctx.shadowBlur=22; ctx.shadowColor=glow;
-        ctx.beginPath(); ctx.arc(cx,cy,R+10, -Math.PI*0.15, Math.PI*0.15); ctx.stroke();
-      }
-      ctx.restore();
-    }
-    // footer
-    ctx.save(); ctx.fillStyle='#8ea0b8'; ctx.font='700 12px ui-sans-serif'; ctx.textAlign='center';
-    ctx.fillText('Click wheels • ←/→ select • ↑/Space rotate • ↓ reverse • N = new code', w*0.5, h-20);
-    ctx.restore();
-    requestAnimationFrame(draw);
-  }
-  setNewPuzzle();
-  draw();
 
-  if('serviceWorker' in navigator){
-    window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js').catch(()=>{}));
+    // parallax sky
+    ctx.fillStyle = '#08121f'; ctx.fillRect(0,0,w,h);
+    // grid glow
+    ctx.save(); ctx.globalAlpha=0.08; ctx.strokeStyle='#7b61ff';
+    for(let x= - (state.camX%40); x<w; x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+    for(let y=0;y<h;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+    ctx.restore();
+
+    // world origin relative to cam
+    function worldToScreen(x,y){ return [Math.floor(x - state.camX), Math.floor(y)]; }
+
+    // draw chunks
+    for(const c of state.chunks){
+      // ground
+      const [gx0,gy0] = worldToScreen(c.x0, c.gy);
+      ctx.fillStyle = '#214a2e'; ctx.fillRect(gx0, gy0, G, h-gy0);
+      // pits
+      ctx.fillStyle = '#0b0f15';
+      for(const p of c.pits){
+        const [px,py] = worldToScreen(p.x, c.gy);
+        ctx.fillRect(px, py, p.w, h-py);
+      }
+      // vines
+      for(const v of c.vines){
+        const [vx,vy] = worldToScreen(v.x, v.y);
+        ctx.strokeStyle='#00f5d4'; ctx.lineWidth=3; ctx.shadowBlur=10; ctx.shadowColor='#00f5d4';
+        ctx.beginPath(); ctx.moveTo(vx, vy); ctx.lineTo(vx, vy+v.len); ctx.stroke();
+      }
+      // logs
+      for(const log of c.logs){
+        const [lx,ly]=worldToScreen(log.x,log.y);
+        ctx.save(); ctx.shadowBlur=8; ctx.shadowColor='#ffd166'; ctx.fillStyle='#b07d2a';
+        ctx.beginPath(); ctx.arc(lx,ly,log.r,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+      // scorpions
+      for(const s of c.scorp){
+        const [sx,sy]=worldToScreen(s.x,s.y);
+        ctx.fillStyle='#ff477e'; ctx.fillRect(sx-13,sy-5,26,10);
+      }
+      // gems
+      for(const g of c.gems){
+        const [gx,gy] = worldToScreen(g.x,g.y);
+        ctx.save(); ctx.shadowBlur=12; ctx.shadowColor='#7b61ff'; ctx.fillStyle='#7b61ff';
+        ctx.beginPath(); ctx.moveTo(gx,gy-8); ctx.lineTo(gx+8,gy); ctx.lineTo(gx,gy+8); ctx.lineTo(gx-8,gy); ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // hero (original character)
+    const hro = state.hero;
+    const [hx,hy] = worldToScreen(hro.x, hro.y);
+    ctx.save();
+    ctx.translate(hx,hy);
+    // body
+    ctx.fillStyle = '#2aa1ff'; ctx.fillRect(-hro.w/2, -hro.h/2, hro.w, hro.h);
+    // cap (original red cap, no logos)
+    ctx.fillStyle = '#e23a58'; ctx.fillRect(-hro.w/2, -hro.h/2-8, hro.w, 8);
+    // face
+    ctx.fillStyle = '#ffcf66'; ctx.fillRect(-hro.w/2+2, -hro.h/2+2, hro.w-4, hro.h/2);
+    ctx.restore();
+
+    // HUD hint
+    ctx.fillStyle='#8ea0b8'; ctx.font='700 12px ui-sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Arrows/WASD to move & jump • Space to grab vine • X to release', w/2, h-14);
   }
+
+  function frame(){
+    update();
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  reset();
+  frame();
+
+  if('serviceWorker' in navigator){ window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js').catch(()=>{})); }
 })();
 </script>
 </body>
